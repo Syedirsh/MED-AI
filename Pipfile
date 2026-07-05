@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+pillow = "*"
+sounddevice = "*"
+scipy = "*"
+pyaudio = "*"
+speechrecognition = "*"
+pydub = "*"
+groq = "*"
+python-dotenv = "*"
+soundfile = "*"
+gradio = "*"
+gtts = "*"
+elevenlabs = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
+python_full_version = "3.12.0"
