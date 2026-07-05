@@ -59,4 +59,4 @@ iface = gr.Interface(
     title="MED-AI -VIRTUAL DOCTOR  "
 )
 
-iface.launch(debug=True, share=True)
+iface.launch()

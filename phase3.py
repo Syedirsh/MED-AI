@@ -1,78 +1,104 @@
-# Step1a: Setup Text to Speech – TTS – model with gTTS
+# ====================================
+# Phase 3 - Text To Speech
+# ====================================
+
 import os
 import platform
 import subprocess
+
 from dotenv import load_dotenv
 from gtts import gTTS
 
-# Load environment variables
 load_dotenv()
 
-# Step1b: Setup Text to Speech – TTS – model with ElevenLabs
-import elevenlabs
-from elevenlabs.client import ElevenLabs
+# gTTS
 
-ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY")
+def text_to_speech_with_gtts(
+    input_text,
+    output_filepath,
+    autoplay=False
+):
 
-
-def text_to_speech_with_gtts(input_text, output_filepath, autoplay=False):
     try:
-        language = "en"
-        audioobj = gTTS(text=input_text, lang=language, slow=False)
-        audioobj.save(output_filepath)
 
-        if autoplay:
-            _play_audio(output_filepath)
-
-    except Exception as e:
-        print("gTTS error:", e)
-
-
-def text_to_speech_with_elevenlabs(input_text, output_filepath, autoplay=False):
-    try:
-        if not ELEVENLABS_API_KEY:
-            print("ElevenLabs API key missing, falling back to gTTS...")
-            return text_to_speech_with_gtts(input_text, output_filepath, autoplay)
-
-        client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
-
-        audio = client.generate(
+        tts = gTTS(
             text=input_text,
-            voice="Alice",
-            model="eleven_turbo_v2"
+            lang="en",
+            slow=False
         )
 
-        elevenlabs.save(audio, output_filepath)
+        tts.save(output_filepath)
 
         if autoplay:
-            _play_audio(output_filepath)
+            play_audio(output_filepath)
 
     except Exception as e:
-        print("ElevenLabs error:", e)
-        print("Falling back to gTTS...")
-        text_to_speech_with_gtts(input_text, output_filepath, autoplay)
+        print("gTTS Error:", e)
 
 
-def _play_audio(filepath):
-    os_name = platform.system()
+
+# Main TTS Function
+
+
+def text_to_speech_with_elevenlabs(
+    input_text,
+    output_filepath,
+    autoplay=False
+):
+
+    text_to_speech_with_gtts(
+        input_text=input_text,
+        output_filepath=output_filepath,
+        autoplay=autoplay
+    )
+
+
+
+# Audio Player
+
+
+def play_audio(filepath):
+
     try:
-        if os_name == "Darwin":  # macOS
-            subprocess.run(['afplay', filepath])
-        elif os_name == "Windows":
-            subprocess.run(['ffplay', '-nodisp', '-autoexit', filepath])
+
+        os_name = platform.system()
+
+        if os_name == "Windows":
+
+            subprocess.run([
+                "ffplay",
+                "-nodisp",
+                "-autoexit",
+                filepath
+            ])
+
+        elif os_name == "Darwin":
+
+            subprocess.run([
+                "afplay",
+                filepath
+            ])
+
         elif os_name == "Linux":
-            subprocess.run(['aplay', filepath])
-        else:
-            raise OSError("Unsupported OS")
+
+            subprocess.run([
+                "aplay",
+                filepath
+            ])
+
     except Exception as e:
-        print(f"Audio play error: {e}")
+
+        print("Playback Error:", e)
 
 
-# === TEST BLOCK ===
+
+# Test
+
+
 if __name__ == "__main__":
-    input_text = "Hi, this is a test voice."
+
     text_to_speech_with_elevenlabs(
-        input_text,
+        input_text="Hello, this is a test.",
         output_filepath="test.mp3",
         autoplay=True
     )
